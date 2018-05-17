@@ -42,13 +42,13 @@ extension StrainsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchBar = searchController.searchBar
         let scope = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
-        //filterContentForSearchText(searchController.searchBar.text!, scope: scope)
+        filterContentForSearchText(searchController.searchBar.text!, scope: scope)
     }
 }
 
 extension StrainsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        //filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
+        filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
     }
 }
 
@@ -61,11 +61,15 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     let closeHeight: CGFloat = 136
     let openHeight: CGFloat = 375
-    var rowsCount = 44
+    var rowsCount: Int = 44
     var itemHeight: [CGFloat] = []
     
     
+    
+    
     let searchController = UISearchController(searchResultsController: nil)
+   
+
     
     private var strainsTableView: UITableView!
     
@@ -77,19 +81,19 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         return searchController.searchBar.text?.isEmpty ?? true
     }
     
-    //    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
-    //        filteredStrains = strains.filter({(strain: Strain) -> Bool in
-    //            let doesCategoryMatch = (scope == "All") || (strain.type.rawValue == scope)
-    //            if searchBarIsEmpty() {
-    //                return doesCategoryMatch
-    //            } else {
-    //                return doesCategoryMatch && strain.name.lowercased().contains(searchText.lowercased())
-    //            }
-    //
-    //        })
-    //
-    //        strainsTableView.reloadData()
-    //    }
+        func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+            filteredStrains = strains.filter({(strain: Strain) -> Bool in
+                let doesCategoryMatch = (scope == "All") || (strain.type == scope)
+                if searchBarIsEmpty() {
+                    return doesCategoryMatch
+                } else {
+                    return doesCategoryMatch && strain.name.lowercased().contains(searchText.lowercased())
+                }
+    
+            })
+    
+            strainsTableView.reloadData()
+        }
     
     
     
@@ -121,18 +125,21 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     private func setup() {
-        
         itemHeight = Array(repeating: closeHeight, count: rowsCount)
         strainsTableView.estimatedRowHeight = closeHeight
         strainsTableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    
+    func dismissKeyboard() {
+        view.endEditing(true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         fetchJSON()
+        
+        
         
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -142,9 +149,8 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         navigationItem.searchController = searchController
         definesPresentationContext = true
         
-        searchController.searchBar.scopeButtonTitles = ["All", "Indica", "Sativa", "Hybrid"]
+        searchController.searchBar.scopeButtonTitles = ["All", "indica", "sativa", "hybrid"]
         searchController.searchBar.delegate = self
-        
         
         
         
@@ -170,16 +176,17 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         strainsTableView.anchor(top: view.topAnchor, right: view.rightAnchor, bottom: view.bottomAnchor, left: view.leftAnchor, paddingTop: 0, paddingRight: 0, paddingBottom: 0, paddingLeft: 0, width: 0, height: 0)
         
         setup()
+        
+        
     }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //        if isFiltering() {
-        //              rowsCount = filteredStrains.count
-        //            return itemHeight.count
-        //        }
+                if isFiltering() {
+                     return filteredStrains.count
+                }
         
-       rowsCount = strains.count
+       
         return strains.count
     }
     
@@ -197,12 +204,12 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         //        if (cell != nil) {
         //            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: reuseIdentifier)
         //        }
-        //        let strain: Strain
-        //        if isFiltering() {
-        //            strain = filteredStrains[indexPath.row]
-        //        } else {
-        //            strain = strains[indexPath.row]
-        //        }
+                let strain: Strain
+                if isFiltering() {
+                    strain = filteredStrains[indexPath.row]
+                } else {
+                    strain = strains[indexPath.row]
+                }
         //        cell.textLabel?.text = strain.name
         //        cell.detailTextLabel?.text = strain.type.rawValue
         
@@ -211,8 +218,8 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         // How to get reference to strain[indexPath.row] inside StrainsFoldingCell
         
         
-        let strain = strains[indexPath.row]
-        
+       
+       
         // Start of Sean's Code
         print(strains.count) // Delete this - Just checking how many strains we have
         cell.set(strain: strain) //Passing the variable you created on line 212 here
@@ -250,6 +257,14 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
             tableView.beginUpdates()
             tableView.endUpdates()
         }, completion: nil)
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchController.searchBar.endEditing(true)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
     }
     
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
