@@ -56,26 +56,19 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     var strains = [Strain]()
-    
+    var filteredStrains = [Strain]()
     
     
     let closeHeight: CGFloat = 136
     let openHeight: CGFloat = 375
-    var rowsCount: Int = 44
+    var rowsCount: Int = 50
     var itemHeight: [CGFloat] = []
     
-    
-    
-    
     let searchController = UISearchController(searchResultsController: nil)
-   
-
-    
-    private var strainsTableView: UITableView!
-    
+   private var strainsTableView: UITableView!
     let reuseIdentifier = "strainCell"
     
-    var filteredStrains = [Strain]()
+    
     
     func searchBarIsEmpty() -> Bool {
         return searchController.searchBar.text?.isEmpty ?? true
@@ -100,17 +93,23 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     fileprivate func fetchJSON() {
         let urlString = "http://app.haligrove.com/imageData.json"
         guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { (data, res, err) in
+        let config = URLSessionConfiguration.default
+        config.requestCachePolicy = .reloadIgnoringLocalCacheData
+        config.urlCache = nil
+       
+        URLSession(configuration: config).dataTask(with: url) { (data, res, err) in
             DispatchQueue.main.async {
                 if let err = err {
                     print("Failed: ", err)
                     return
                 }
-                
                 guard let data = data else { return }
                 do {
                     let decoder = JSONDecoder()
                     self.strains = try decoder.decode([Strain].self, from: data)
+                    
+                    print(self.strains)
+                    
                     self.strainsTableView.reloadData()
                 } catch let jsonErr {
                     print("Failed: ", jsonErr)
@@ -204,12 +203,7 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         //        if (cell != nil) {
         //            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: reuseIdentifier)
         //        }
-                let strain: Strain
-                if isFiltering() {
-                    strain = filteredStrains[indexPath.row]
-                } else {
-                    strain = strains[indexPath.row]
-                }
+        
         //        cell.textLabel?.text = strain.name
         //        cell.detailTextLabel?.text = strain.type.rawValue
         
@@ -217,15 +211,27 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         // How do I pass strain over to my StrainsFoldingCell so that i can input the data into the labels.
         // How to get reference to strain[indexPath.row] inside StrainsFoldingCell
         
+//        if let imageURl = URL(string: strains[indexPath.row].src) {
+//            do {
+//                let data = try Data(contentsOf: imageURl)
+//                let image = UIImage(contentsOfFile: data)
+//            } catch {
+//                print("couldn't load image")
+//            }
+//
+//        }
+        let strain: Strain
         
-       
-       
-        // Start of Sean's Code
-        print(strains.count) // Delete this - Just checking how many strains we have
+        if isFiltering() {
+            strain = filteredStrains[indexPath.row]
+        } else {
+            strain = strains[indexPath.row]
+        }
+               // Start of Sean's Code
         cell.set(strain: strain) //Passing the variable you created on line 212 here
         // End of Sean's Code
         
-        
+    
         
         return cell
     }

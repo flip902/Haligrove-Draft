@@ -8,6 +8,40 @@
 
 import UIKit
 
+// MARK: - loadImageFromUrlString
+let imageCache = NSCache<AnyObject, UIImage>()
+
+extension UIImageView {
+    
+    
+    func loadImageUsingUrlString(urlString: String) {
+        
+        guard let url = URL(string: urlString) else { return }
+        
+        image = nil
+        
+        if let imageFromCache = imageCache.object(forKey: urlString as AnyObject) {
+            self.image = imageFromCache
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if error != nil {
+                print(error)
+                return
+            }
+            DispatchQueue.main.async {
+                guard let data = data else { return }
+                let imageToCache = UIImage(data: data)
+                imageCache.setObject(imageToCache!, forKey: urlString as AnyObject)
+                self.image = imageToCache
+            }
+            
+            }.resume()
+    }
+}
+
+
 // MARK: - anchor extension
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor?, right: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, left: NSLayoutXAxisAnchor?,  paddingTop: CGFloat, paddingRight: CGFloat, paddingBottom: CGFloat, paddingLeft: CGFloat, width: CGFloat, height: CGFloat) {

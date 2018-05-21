@@ -10,14 +10,20 @@ import UIKit
 import FoldingCell
 import EasyPeasy
 
-class StrainsFoldingCell: FoldingCell {
+class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
     
     //Sean Note: As of right now you are creating all of your UI elements within the scrope of a funtion (createContainerView & createForegroundView). This means you do not have access to the UI elements outside of the scope of that function. You need access to them so you can set properties on them. I did 2 as an example (strainName & strainType). You'll have to complete the rest. They get initialized here, configured in your "create" functions, then I assign their text in "set(strain)" on lines 54 and 55. You'd need to do this for all your UI elements that need set.
+    
+    // foreground cell UI Items
+    var imageContainer = UIImageView()
+    
     var strainName = UILabel()
     var strainType = UILabel()
-    
-    
-    
+    var pricePerGramLabel = UILabel()
+    var priceOfFiveLabel = UILabel()
+    var saleMark = UILabel()
+    var new = UILabel()
+     var inventoryBar = UIImageView()
     
    // How to get reference to strain[indexPath.row]
     
@@ -51,12 +57,56 @@ class StrainsFoldingCell: FoldingCell {
     
     
     
+    
     //Start of Sean's Code
     func set(strain: Strain) {
         self.strain = strain
         
+        // foreground View
         strainName.text = strain.name
+        strainName.adjustsFontSizeToFitWidth = true
+        strainName.minimumScaleFactor = 0.5
+        
         strainType.text = strain.type
+        
+        pricePerGramLabel.text = strain.pricePerGram
+        pricePerGramLabel.adjustsFontSizeToFitWidth = true
+        pricePerGramLabel.minimumScaleFactor = 0.5
+        
+        priceOfFiveLabel.text = strain.pricePerOunce
+        
+        if strain.sale == "sale" {
+            saleMark.isHidden = false
+        } else {
+            saleMark.isHidden = true
+        }
+        
+        if strain.isNew == "new" {
+            new.isHidden = false
+        } else {
+            new.isHidden = true
+        }
+        
+        if strain.inventory == "full" {
+            inventoryBar.image = #imageLiteral(resourceName: "full")
+        }
+        if strain.inventory == "med" {
+            inventoryBar.image = #imageLiteral(resourceName: "half")
+        }
+        if strain.inventory == "low" {
+            inventoryBar.image = #imageLiteral(resourceName: "oneQuarter")
+        }
+        
+        
+        imageContainer.loadImageUsingUrlString(urlString: strain.src)
+        
+        
+       
+       
+        
+        // Container View
+        
+        
         
         // This is where you'd continue to set the values of your UI elements. Just did the first 2 as an example.
     }
@@ -64,6 +114,8 @@ class StrainsFoldingCell: FoldingCell {
   
     
 }
+
+
 
 extension StrainsFoldingCell {
     
@@ -77,11 +129,11 @@ extension StrainsFoldingCell {
         foregroundView.translatesAutoresizingMaskIntoConstraints = false
         foregroundView.layer.cornerRadius = 5
         
-        let strainImage = UIImage(named: "board")
-        let imageView = UIImageView(image: strainImage)
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 5
-        imageView.clipsToBounds = true
+        
+        
+        imageContainer.contentMode = .scaleAspectFill
+        imageContainer.layer.cornerRadius = 5
+        imageContainer.clipsToBounds = true
         
         
         
@@ -90,10 +142,10 @@ extension StrainsFoldingCell {
         
         
         // Sean's note: You initialize these up top, and then edit them here. Delete line 91 comment. I'm leaving it there so you can see what I did. Same for line 102.
+        
 //        let strainName = UILabel()
         strainName.font = UIFont(name: "Pineapple Bold Inline", size: 38)
         strainName.textColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
-        
         strainName.layer.shadowColor = #colorLiteral(red: 0.568627451, green: 0.5254901961, blue: 0.3568627451, alpha: 1)
         strainName.layer.shadowRadius = 1.0
         strainName.layer.shadowOpacity = 1.0
@@ -101,26 +153,14 @@ extension StrainsFoldingCell {
         strainName.layer.masksToBounds = true
         
         
-//        let strainType = UILabel()
+
         strainType.font = UIFont(name: "Quicksand-Bold", size: 20)
         strainType.textColor = #colorLiteral(red: 0.568627451, green: 0.5254901961, blue: 0.3568627451, alpha: 1)
-        
-//        strainType.layer.shadowColor = #colorLiteral(red: 0.07843137255, green: 0.06666666667, blue: 0.05098039216, alpha: 1)
-//        strainType.layer.shadowRadius = 1.0
-//        strainType.layer.shadowOpacity = 1.0
-//        strainType.layer.shadowOffset = CGSize(width: 1, height: 1)
         strainType.layer.masksToBounds = true
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        let saleMark = UILabel()
+        // initialize up Top
+       
         saleMark.font = UIFont(name: "Quicksand-Regular", size: 16)
         saleMark.textColor = #colorLiteral(red: 0.968627451, green: 0.9647058824, blue: 0.9450980392, alpha: 1)
         saleMark.text = "sale"
@@ -128,17 +168,19 @@ extension StrainsFoldingCell {
         saleMark.layer.cornerRadius = 5
         saleMark.clipsToBounds = true
         
-        let pricePerGramLabel = UILabel()
+       
+     
         pricePerGramLabel.font = UIFont(name: "Quicksand-Bold", size: 26)
         pricePerGramLabel.textColor = #colorLiteral(red: 0.07843137255, green: 0.06666666667, blue: 0.05098039216, alpha: 1)
         
+       
         
-        let priceOfFiveLabel = UILabel()
         priceOfFiveLabel.font = UIFont(name: "Quicsand-Light", size: 14)
         priceOfFiveLabel.textColor = #colorLiteral(red: 0.07843137255, green: 0.06666666667, blue: 0.05098039216, alpha: 1)
         priceOfFiveLabel.text = ""
         
-        let new = UILabel()
+        // initialize up Top
+        
         new.font = UIFont(name: "Quicksand-Regular", size: 16)
         new.textColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
         new.text = "new"
@@ -146,9 +188,11 @@ extension StrainsFoldingCell {
         new.layer.cornerRadius = 5
         new.clipsToBounds = true
         
-        let inventoryBar = UIImageView(image: #imageLiteral(resourceName: "threeQuarters"))
+        // initialize up Top
+       
         inventoryBar.contentMode = .scaleToFill
         
+        // initialize up Top
         let inventoryLabel = UILabel()
         inventoryLabel.font = UIFont(name: "Quicksand-Regular", size: 8)
         inventoryLabel.textColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
@@ -156,7 +200,7 @@ extension StrainsFoldingCell {
         
         
         contentView.addSubview(foregroundView)
-        foregroundView.addSubview(imageView)
+        foregroundView.addSubview(imageContainer)
         foregroundView.addSubview(strainName)
         foregroundView.addSubview(strainType)
         foregroundView.addSubview(saleMark)
@@ -168,22 +212,22 @@ extension StrainsFoldingCell {
         
         inventoryLabel.anchor(top: nil, right: foregroundView.rightAnchor, bottom: inventoryBar.topAnchor, left: priceOfFiveLabel.rightAnchor, paddingTop: 0, paddingRight: 6, paddingBottom: 2, paddingLeft: 6, width: 0, height: 9)
         
-        inventoryBar.anchor(top: saleMark.bottomAnchor, right: foregroundView.rightAnchor, bottom: foregroundView.bottomAnchor, left: imageView.rightAnchor, paddingTop: 8, paddingRight: 6, paddingBottom: 6, paddingLeft: 6, width: 0, height: 6.8)
+        inventoryBar.anchor(top: saleMark.bottomAnchor, right: foregroundView.rightAnchor, bottom: foregroundView.bottomAnchor, left: imageContainer.rightAnchor, paddingTop: 8, paddingRight: 6, paddingBottom: 6, paddingLeft: 6, width: 0, height: 6.8)
         
-        new.anchor(top: imageView.topAnchor, right: foregroundView.rightAnchor, bottom: nil, left: nil, paddingTop: 0, paddingRight: 6, paddingBottom: 0, paddingLeft: 0, width: 0, height: 20)
+        new.anchor(top: imageContainer.topAnchor, right: foregroundView.rightAnchor, bottom: nil, left: nil, paddingTop: 0, paddingRight: 6, paddingBottom: 0, paddingLeft: 0, width: 0, height: 20)
         
         priceOfFiveLabel.anchor(top: pricePerGramLabel.bottomAnchor, right: inventoryLabel.leftAnchor, bottom: nil, left: pricePerGramLabel.leftAnchor, paddingTop: 0, paddingRight: 38, paddingBottom: 0, paddingLeft: 0, width: 0, height: 0)
         
         pricePerGramLabel.anchor(top: strainName.bottomAnchor, right: foregroundView.rightAnchor, bottom: nil, left: strainType.rightAnchor, paddingTop: -4, paddingRight: 0, paddingBottom: 0, paddingLeft: 12, width: 0, height: 0)
         
-        saleMark.anchor(top: strainType.bottomAnchor, right: nil, bottom: nil, left: imageView.rightAnchor, paddingTop: 8, paddingRight: 0, paddingBottom: 0, paddingLeft: 6, width: 0, height: 20)
+        saleMark.anchor(top: strainType.bottomAnchor, right: nil, bottom: nil, left: imageContainer.rightAnchor, paddingTop: 8, paddingRight: 0, paddingBottom: 0, paddingLeft: 6, width: 0, height: 20)
         
         
-        strainType.anchor(top: strainName.bottomAnchor, right: strainName.centerXAnchor, bottom: nil, left: imageView.rightAnchor, paddingTop: 0, paddingRight: 0, paddingBottom: 0, paddingLeft: 6, width: 0, height: 21)
+        strainType.anchor(top: strainName.bottomAnchor, right: strainName.centerXAnchor, bottom: nil, left: imageContainer.rightAnchor, paddingTop: 0, paddingRight: 0, paddingBottom: 0, paddingLeft: 6, width: 0, height: 21)
         
-        strainName.anchor(top: foregroundView.topAnchor, right: nil, bottom: nil, left: imageView.rightAnchor, paddingTop: 6, paddingRight: 6, paddingBottom: 0, paddingLeft: 6, width: 0, height: 0)
+        strainName.anchor(top: foregroundView.topAnchor, right: nil, bottom: nil, left: imageContainer.rightAnchor, paddingTop: 6, paddingRight: 6, paddingBottom: 0, paddingLeft: 6, width: 0, height: 0)
         
-        imageView.anchor(top: foregroundView.topAnchor, right: nil, bottom: foregroundView.bottomAnchor, left: foregroundView.leftAnchor, paddingTop: 6, paddingRight: 0, paddingBottom: 6, paddingLeft: 6, width: 100, height: 80)
+        imageContainer.anchor(top: foregroundView.topAnchor, right: nil, bottom: foregroundView.bottomAnchor, left: foregroundView.leftAnchor, paddingTop: 6, paddingRight: 0, paddingBottom: 6, paddingLeft: 6, width: 100, height: 80)
         
         foregroundView.easy.layout([
             Height(120),
@@ -511,10 +555,10 @@ extension StrainsFoldingCell {
 //            self.addToCartButton.transform = .identity
 //        }, completion: nil)
     }
-    
-    
-    
-      
 }
+
+
+
+
 
 
