@@ -20,20 +20,23 @@ struct Strain: Decodable {
     let src: String
     let type: String
     let isNew: String
+    let pricePerGram: Float
+    let priceForFive: Float
+    let pricePerOunce: Float
     let sale: String
-    let pricePerGram: String
-    let pricePerOunce: String
+    let salePricePerGram: Float
+    let salePriceForFive: Float
+    let salePricePerOunce: Float
     let description: String
     let inventory: String
-    let THC: String
-    let taste: String
-    let aroma: String
-    let pain: String
-    let insomnia: String
-    let appetite: String
-    let overall: String
+    let THC: Int
+    let taste: Int
+    let aroma: Int
+    let pain: Int
+    let insomnia: Int
+    let appetite: Int
+    let overall: Int
     let soldOut: String
-    let opacity: String
 }
 
 
@@ -91,7 +94,7 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     fileprivate func fetchJSON() {
-        let urlString = "http://app.haligrove.com/imageData.json"
+        let urlString = "http://app.haligrove.com/strainData.json"
         guard let url = URL(string: urlString) else { return }
         let config = URLSessionConfiguration.default
         config.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -199,6 +202,7 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! StrainsFoldingCell
         //        if (cell != nil) {
         //            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: reuseIdentifier)

@@ -23,10 +23,28 @@ class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
     var priceOfFiveLabel = UILabel()
     var saleMark = UILabel()
     var new = UILabel()
-     var inventoryBar = UIImageView()
+    var inventoryBar = UIImageView()
     
    // How to get reference to strain[indexPath.row]
     
+    
+    // ContainerView UI Items
+    var overAll = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
+    var overallTrackLayer = CAShapeLayer()
+    var overallShapeLayer = CAShapeLayer()
+    var overallValueLabel = UILabel()
+    
+    var ThcView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
+    var ThcTrackLayer = CAShapeLayer()
+    var ThcShapeLayer = CAShapeLayer()
+    var thcValueLabel = UILabel()
+    
+    var containerImageView = UIImageView()
+    
+    var foldoutStrainLabel = UILabel()
+    var foldoutStrainType = UILabel()
+    
+    var strainDescription = UILabel()
     
     
     //Start of Sean's code
@@ -38,7 +56,6 @@ class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         self.backgroundColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
         containerView = createContainerView()
         foregroundView = createForegroundView()
@@ -69,11 +86,11 @@ class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
         
         strainType.text = strain.type
         
-        pricePerGramLabel.text = strain.pricePerGram
+        pricePerGramLabel.text = "$\(Int(strain.pricePerGram))/g"
         pricePerGramLabel.adjustsFontSizeToFitWidth = true
         pricePerGramLabel.minimumScaleFactor = 0.5
         
-        priceOfFiveLabel.text = strain.pricePerOunce
+        priceOfFiveLabel.text = "5 for $\(Int(strain.priceForFive))"
         
         if strain.sale == "sale" {
             saleMark.isHidden = false
@@ -102,9 +119,21 @@ class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
         
         
        
-       
-        
+
         // Container View
+        overallShapeLayer.strokeEnd = CGFloat(Float(strain.overall) / 100)
+        overallValueLabel.text = "\(strain.overall)"
+        
+        ThcShapeLayer.strokeEnd = CGFloat(Float(strain.THC) / 100)
+        thcValueLabel.text = "\(strain.THC)%"
+        
+        containerImageView.loadImageUsingUrlString(urlString: strain.src)
+        
+        foldoutStrainLabel.text = strain.name
+        foldoutStrainType.text = strain.type
+        
+        
+        strainDescription.text = strain.description
         
         
         
@@ -135,12 +164,7 @@ extension StrainsFoldingCell {
         imageContainer.layer.cornerRadius = 5
         imageContainer.clipsToBounds = true
         
-        
-        
-        
-        
-        
-        
+                
         // Sean's note: You initialize these up top, and then edit them here. Delete line 91 comment. I'm leaving it there so you can see what I did. Same for line 102.
         
 //        let strainName = UILabel()
@@ -258,11 +282,10 @@ extension StrainsFoldingCell {
         
         
         let foldoutImage: UIImageView = {
-            let image = #imageLiteral(resourceName: "board")
-            let imageView = UIImageView(image: image)
-            imageView.contentMode = .scaleAspectFit
-            imageView.layer.cornerRadius = 5
-            imageView.clipsToBounds = true
+            
+            containerImageView.contentMode = .scaleAspectFit
+            containerImageView.layer.cornerRadius = 5
+            containerImageView.clipsToBounds = true
             
             let infoButton: UIButton = {
                 let button = UIButton(type: .custom)
@@ -275,93 +298,63 @@ extension StrainsFoldingCell {
                 return button
             }()
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showStrainInfoView))
-            imageView.addGestureRecognizer(tapGesture)
-            imageView.isUserInteractionEnabled = true
+            containerImageView.addGestureRecognizer(tapGesture)
+            containerImageView.isUserInteractionEnabled = true
             
-            imageView.addSubview(infoButton)
-            infoButton.anchor(top: imageView.topAnchor, right: nil, bottom: nil, left: imageView.leftAnchor, paddingTop: 6, paddingRight: 0, paddingBottom: 0, paddingLeft: 6, width: 25, height: 25)
+            containerImageView.addSubview(infoButton)
+            infoButton.anchor(top: containerImageView.topAnchor, right: nil, bottom: nil, left: containerImageView.leftAnchor, paddingTop: 6, paddingRight: 0, paddingBottom: 0, paddingLeft: 6, width: 25, height: 25)
             
-            return imageView
+            return containerImageView
         }()
         
         img = foldoutImage
         
     
         
-        let foldoutStrainLabel: UILabel = {
-            let label = UILabel()
-            label.text = "The Board"
-            label.font = UIFont(name: "PineappleBoldInline", size: 26)
-            label.textColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
-            return label
-        }()
         
-        let foldoutStrainType: UILabel = {
-            let label = UILabel()
-            label.font = UIFont(name: "Quicksand-Regular", size: 18)
-            label.textColor = #colorLiteral(red: 0.568627451, green: 0.5254901961, blue: 0.3568627451, alpha: 1)
-            label.text = "Indica"
-            return label
-        }()
+        foldoutStrainLabel.font = UIFont(name: "PineappleBoldInline", size: 26)
+        foldoutStrainLabel.textColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
         
         
+        foldoutStrainType.font = UIFont(name: "Quicksand-Regular", size: 18)
+        foldoutStrainType.textColor = #colorLiteral(red: 0.568627451, green: 0.5254901961, blue: 0.3568627451, alpha: 1)
         
-        let strainDescription: UILabel = {
-            let font = UIFont(name: "Quicksand-Medium", size: 14)
-            let text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived the leap into electronic typesetting, remaining essentially unchanged. It popularised in the 1960s with the release of sheets."
-            let label = UILabel()
-            label.numberOfLines = 0
-            label.lineBreakMode = NSLineBreakMode.byWordWrapping
-            label.font = font
-            label.text = text
-            label.sizeToFit()
-            return label
-        }()
-        
-        
+        strainDescription.numberOfLines = 0
+        //strainDescription.lineBreakMode = NSLineBreakMode.byWordWrapping
+        strainDescription.font = UIFont(name: "Quicksand-Medium", size: 14)
+        strainDescription.adjustsFontSizeToFitWidth = true
         
         
         
         let overAllView: UIView = {
-            let view = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
-
-
-            let trackLayer = CAShapeLayer()
-             let shapeLayer = CAShapeLayer()
+            
 
             let circularPath = UIBezierPath(arcCenter: .zero, radius: 30, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: true)
 
-            trackLayer.path = circularPath.cgPath
-            trackLayer.strokeColor = #colorLiteral(red: 0.7076940536, green: 0.6990507841, blue: 0.6990718842, alpha: 1)
-            trackLayer.lineWidth = 5
-            trackLayer.lineCap = kCALineCapRound
-            trackLayer.fillColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
-            trackLayer.position = view.center
+            overallTrackLayer.path = circularPath.cgPath
+            overallTrackLayer.strokeColor = #colorLiteral(red: 0.7076940536, green: 0.6990507841, blue: 0.6990718842, alpha: 1)
+            overallTrackLayer.lineWidth = 5
+            overallTrackLayer.lineCap = kCALineCapRound
+            overallTrackLayer.fillColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
+            overallTrackLayer.position = overAll.center
 
 
-            shapeLayer.path = circularPath.cgPath
-            shapeLayer.strokeColor = #colorLiteral(red: 0.6196078431, green: 0.3529411765, blue: 0.8352941176, alpha: 1)
-            shapeLayer.lineWidth = 5
-            shapeLayer.lineCap = kCALineCapRound
-            shapeLayer.fillColor = UIColor.clear.cgColor
-            shapeLayer.position = view.center
+            overallShapeLayer.path = circularPath.cgPath
+            overallShapeLayer.strokeColor = #colorLiteral(red: 0.6196078431, green: 0.3529411765, blue: 0.8352941176, alpha: 1)
+            overallShapeLayer.lineWidth = 5
+            overallShapeLayer.lineCap = kCALineCapRound
+            overallShapeLayer.fillColor = UIColor.clear.cgColor
+            overallShapeLayer.position = overAll.center
 
-            shapeLayer.transform = CATransform3DMakeRotation(CGFloat.pi / 2, 0, 0, 1)
+            overallShapeLayer.transform = CATransform3DMakeRotation(CGFloat.pi / 2, 0, 0, 1)
 
-            shapeLayer.strokeEnd = 0.88
+            overallValueLabel.textColor = #colorLiteral(red: 0.8392156863, green: 0.7568627451, blue: 0.5137254902, alpha: 1)
+            overallValueLabel.textAlignment = .center
+            overallValueLabel.font = UIFont(name: "Quicksand-Bold", size: 22)
 
-            let valueLabel: UILabel = {
-                let label = UILabel()
-                label.text = "88"
-                label.textColor = #colorLiteral(red: 0.8392156863, green: 0.7568627451, blue: 0.5137254902, alpha: 1)
-                label.textAlignment = .center
-                label.font = UIFont(name: "Quicksand-Bold", size: 22)
-                return label
-            }()
-
-            valueLabel.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-            valueLabel.center.x = view.center.x
-            valueLabel.center.y = view.center.y - 4
+            overallValueLabel.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+            overallValueLabel.center.x = overAll.center.x
+            overallValueLabel.center.y = overAll.center.y - 4
 
             let overallLabel: UILabel = {
                 let label = UILabel()
@@ -373,59 +366,49 @@ extension StrainsFoldingCell {
             }()
 
             overallLabel.frame = CGRect(x: 0, y: 0, width: 50, height: 20)
-            overallLabel.center.x = view.center.x
-            overallLabel.center.y = view.center.y + 8
+            overallLabel.center.x = overAll.center.x
+            overallLabel.center.y = overAll.center.y + 8
 
-            view.layer.addSublayer(trackLayer)
-            view.layer.addSublayer(shapeLayer)
-            view.addSubview(valueLabel)
-            view.addSubview(overallLabel)
-
-
+            overAll.layer.addSublayer(overallTrackLayer)
+            overAll.layer.addSublayer(overallShapeLayer)
+            overAll.addSubview(overallValueLabel)
+            overAll.addSubview(overallLabel)
 
 
-            return view
+
+
+            return overAll
         }()
         
         let thcView: UIView = {
-            let view = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
-
-            let trackLayer = CAShapeLayer()
-            let shapeLayer = CAShapeLayer()
-
+            
             let circularPath = UIBezierPath(arcCenter: .zero, radius: 30, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: true)
 
-            trackLayer.path = circularPath.cgPath
-            trackLayer.strokeColor = #colorLiteral(red: 0.7076940536, green: 0.6990507841, blue: 0.6990718842, alpha: 1)
-            trackLayer.lineWidth = 5
-            trackLayer.lineCap = kCALineCapRound
-            trackLayer.fillColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
-            trackLayer.position = view.center
+            ThcTrackLayer.path = circularPath.cgPath
+            ThcTrackLayer.strokeColor = #colorLiteral(red: 0.7076940536, green: 0.6990507841, blue: 0.6990718842, alpha: 1)
+            ThcTrackLayer.lineWidth = 5
+            ThcTrackLayer.lineCap = kCALineCapRound
+            ThcTrackLayer.fillColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
+            ThcTrackLayer.position = ThcView.center
 
 
-            shapeLayer.path = circularPath.cgPath
-            shapeLayer.strokeColor = #colorLiteral(red: 0.5960784314, green: 0.9098039216, blue: 0.5568627451, alpha: 1)
-            shapeLayer.lineWidth = 5
-            shapeLayer.lineCap = kCALineCapRound
-            shapeLayer.fillColor = UIColor.clear.cgColor
-            shapeLayer.position = view.center
+            ThcShapeLayer.path = circularPath.cgPath
+            ThcShapeLayer.strokeColor = #colorLiteral(red: 0.5960784314, green: 0.9098039216, blue: 0.5568627451, alpha: 1)
+            ThcShapeLayer.lineWidth = 5
+            ThcShapeLayer.lineCap = kCALineCapRound
+            ThcShapeLayer.fillColor = UIColor.clear.cgColor
+            ThcShapeLayer.position = ThcView.center
 
-            shapeLayer.transform = CATransform3DMakeRotation(CGFloat.pi / 2, 0, 0, 1)
+            ThcShapeLayer.transform = CATransform3DMakeRotation(CGFloat.pi / 2, 0, 0, 1)
 
-            shapeLayer.strokeEnd = 0.26
+            
+            thcValueLabel.textColor = #colorLiteral(red: 0.8392156863, green: 0.7568627451, blue: 0.5137254902, alpha: 1)
+            thcValueLabel.textAlignment = .center
+            thcValueLabel.font = UIFont(name: "Quicksand-Bold", size: 20)
 
-            let valueLabel: UILabel = {
-                let label = UILabel()
-                label.text = "26%"
-                label.textColor = #colorLiteral(red: 0.8392156863, green: 0.7568627451, blue: 0.5137254902, alpha: 1)
-                label.textAlignment = .center
-                label.font = UIFont(name: "Quicksand-Bold", size: 20)
-                return label
-            }()
-
-            valueLabel.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
-            valueLabel.center.x = view.center.x
-            valueLabel.center.y = view.center.y - 5
+            thcValueLabel.frame = CGRect(x: 0, y: 0, width: 50, height: 30)
+            thcValueLabel.center.x = ThcView.center.x
+            thcValueLabel.center.y = ThcView.center.y - 5
 
             let thcLabel: UILabel = {
                 let label = UILabel()
@@ -437,15 +420,15 @@ extension StrainsFoldingCell {
             }()
 
             thcLabel.frame = CGRect(x: 0, y: 0, width: 60, height: 30)
-            thcLabel.center.x = view.center.x
-            thcLabel.center.y = view.center.y + 11
+            thcLabel.center.x = ThcView.center.x
+            thcLabel.center.y = ThcView.center.y + 11
 
-            view.layer.addSublayer(trackLayer)
-            view.layer.addSublayer(shapeLayer)
-            view.addSubview(valueLabel)
-            view.addSubview(thcLabel)
+            ThcView.layer.addSublayer(ThcTrackLayer)
+            ThcView.layer.addSublayer(ThcShapeLayer)
+            ThcView.addSubview(thcValueLabel)
+            ThcView.addSubview(thcLabel)
 
-            return view
+            return ThcView
         }()
         
         let addToCartButton: UIButton = {
@@ -486,10 +469,6 @@ extension StrainsFoldingCell {
             label.textAlignment = .left
             return label
         }()
-        
-        
-        
-    
         
         contentView.addSubview(containerView)
         containerView.addSubview(foldoutImage)
