@@ -81,16 +81,17 @@ class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
         
         // foreground View
         strainName.text = strain.name
-        strainName.adjustsFontSizeToFitWidth = true
-        strainName.minimumScaleFactor = 0.5
-        
         strainType.text = strain.type
+        strainName.adjustsFontSizeToFitWidth = true
+        strainName.minimumScaleFactor = 0.2
         
         pricePerGramLabel.text = "$\(Int(strain.pricePerGram))/g"
         pricePerGramLabel.adjustsFontSizeToFitWidth = true
         pricePerGramLabel.minimumScaleFactor = 0.5
         
         priceOfFiveLabel.text = "5 for $\(Int(strain.priceForFive))"
+        priceOfFiveLabel.adjustsFontSizeToFitWidth = true
+        priceOfFiveLabel.minimumScaleFactor = 0.5
         
         if strain.sale == "sale" {
             saleMark.isHidden = false
@@ -175,6 +176,8 @@ extension StrainsFoldingCell {
         strainName.layer.shadowOpacity = 1.0
         strainName.layer.shadowOffset = CGSize(width: 3, height: 3)
         strainName.layer.masksToBounds = true
+        strainName.numberOfLines = 0
+        strainName.sizeToFit()
         
         
 
@@ -249,7 +252,7 @@ extension StrainsFoldingCell {
         
         strainType.anchor(top: strainName.bottomAnchor, right: strainName.centerXAnchor, bottom: nil, left: imageContainer.rightAnchor, paddingTop: 0, paddingRight: 0, paddingBottom: 0, paddingLeft: 6, width: 0, height: 21)
         
-        strainName.anchor(top: foregroundView.topAnchor, right: nil, bottom: nil, left: imageContainer.rightAnchor, paddingTop: 6, paddingRight: 6, paddingBottom: 0, paddingLeft: 6, width: 0, height: 0)
+        strainName.anchor(top: foregroundView.topAnchor, right: foregroundView.rightAnchor, bottom: nil, left: imageContainer.rightAnchor, paddingTop: 6, paddingRight: 40, paddingBottom: 0, paddingLeft: 6, width: 0, height: 0)
         
         imageContainer.anchor(top: foregroundView.topAnchor, right: nil, bottom: foregroundView.bottomAnchor, left: foregroundView.leftAnchor, paddingTop: 6, paddingRight: 0, paddingBottom: 6, paddingLeft: 6, width: 100, height: 80)
         

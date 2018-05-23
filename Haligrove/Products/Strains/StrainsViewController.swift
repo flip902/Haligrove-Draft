@@ -15,7 +15,7 @@ enum StrainType: String {
 }
 
 struct Strain: Decodable {
-    let id: UUID
+    let id: String
     let name: String
     let src: String
     let type: String
