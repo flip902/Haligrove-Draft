@@ -57,6 +57,7 @@ extension StrainsViewController: UISearchBarDelegate {
 
 class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
     
     var strains = [Strain]()
     var filteredStrains = [Strain]()
@@ -68,7 +69,9 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     var itemHeight: [CGFloat] = []
     
     let searchController = UISearchController(searchResultsController: nil)
+    
    private var strainsTableView: UITableView!
+    
     let reuseIdentifier = "strainCell"
     
     
@@ -112,13 +115,16 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.strains = try decoder.decode([Strain].self, from: data)
                     
                     print(self.strains)
-                    
                     self.strainsTableView.reloadData()
+                    self.activityIndicator.stopAnimating()
                 } catch let jsonErr {
                     print("Failed: ", jsonErr)
                 }
+                
+                
             }
-            }.resume()
+            
+        }.resume()
     }
     
     func isFiltering() -> Bool {
@@ -138,6 +144,10 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
+        
         
         fetchJSON()
         
@@ -170,7 +180,17 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         strainsTableView.backgroundColor = #colorLiteral(red: 0.4274509804, green: 0.337254902, blue: 0.2117647059, alpha: 1)
         strainsTableView.dataSource = self
         strainsTableView.delegate = self
+        strainsTableView.separatorStyle = .none
         self.view.addSubview(strainsTableView)
+        
+        
+        
+        self.view.addSubview(activityIndicator)
+        self.view.bringSubview(toFront: activityIndicator)
+        activityIndicator.color = #colorLiteral(red: 0.8392156863, green: 0.7568627451, blue: 0.5137254902, alpha: 1)
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.startAnimating()
         
         navigationItem.title = "Strains"
         
@@ -180,7 +200,10 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
         setup()
         
         
+        
     }
+    
+    
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
