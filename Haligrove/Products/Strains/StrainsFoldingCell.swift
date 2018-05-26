@@ -133,13 +133,14 @@ class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
         if strain.sale == "sale" {
             salePriceFor5.text =  "5 for $\(Int(strain.salePriceForFive))"
             salePricePerOz.text = "$\(Int(strain.salePricePerOunce)) per Oz."
-            saleStackView.isHidden = false
+            
             if strain.salePriceForFive == strain.priceForFive {
                 salePriceFor5.isHidden = true
             }
-            if strain.salePricePerOunce == strain.pricePerOunce {
+            if strain.salePricePerOunce  == strain.pricePerOunce {
                 salePricePerOz.isHidden = true
             }
+            saleStackView.isHidden = false
         } else {
             saleStackView.isHidden = true
         }
