@@ -111,9 +111,7 @@ class StrainsFoldingCell: FoldingCell, NSCacheDelegate {
         imageContainer.loadImageUsingUrlString(urlString: strain.src)
         
         
-       
-
-        // Container View
+       // Container View
         overallShapeLayer.strokeEnd = CGFloat(Float(strain.overall) / 100)
         overallValueLabel.text = "\(strain.overall)"
         
