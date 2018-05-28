@@ -97,7 +97,7 @@ class StrainsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     
     fileprivate func fetchJSON() {
-        let urlString = "http://app.haligrove.com/strainData.json"
+        let urlString = "https://flip902.github.io/strainData.json"
         guard let url = URL(string: urlString) else { return }
         let config = URLSessionConfiguration.default
         config.requestCachePolicy = .reloadIgnoringLocalCacheData

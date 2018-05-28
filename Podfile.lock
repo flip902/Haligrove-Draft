@@ -27,6 +27,7 @@ PODS:
   - FirebaseInstanceID (2.0.0):
     - FirebaseCore (~> 4.0)
   - FoldingCell (3.0.6)
+  - GlidingCollection (1.1.0)
   - GoogleToolboxForMac/DebugUtils (2.1.1):
     - GoogleToolboxForMac/Defines (= 2.1.1)
   - GoogleToolboxForMac/Defines (2.1.1)
@@ -51,6 +52,7 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Database
   - FoldingCell
+  - GlidingCollection
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -62,6 +64,7 @@ SPEC REPOS:
     - FirebaseDatabase
     - FirebaseInstanceID
     - FoldingCell
+    - GlidingCollection
     - GoogleToolboxForMac
     - GTMSessionFetcher
     - nanopb
@@ -75,10 +78,11 @@ SPEC CHECKSUMS:
   FirebaseDatabase: d829b3a8c3e2ac7a16773c5df226966b0805dfc2
   FirebaseInstanceID: 9fbf536668f4d3f0880e7438456dabd1376e294b
   FoldingCell: 4848ec8a2056d5751bfb710df14521fc64d48ad7
+  GlidingCollection: 2194165075fa7230027049238c9ed724453557e6
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
   GTMSessionFetcher: 5ad62e8200fa00ed011fe5e08d27fef72c5b1429
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
 
-PODFILE CHECKSUM: b09c5836048ff05aecec19f1bf9c5e9985186468
+PODFILE CHECKSUM: 8b26a6b575ab41c436b56bc027cb02ed170fc3e0
 
 COCOAPODS: 1.5.0

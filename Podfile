@@ -12,4 +12,5 @@ target 'Haligrove' do
   pod 'Firebase/Database'
   pod 'FoldingCell'
   pod 'EasyPeasy'
+  pod 'GlidingCollection'
 end
